@@ -1,214 +1,264 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "htt`://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>生日快乐!</title>     
-    <link type="text/css" rel="stylesheet" href="./css/default.css">
-    <script type="text/javascript" src="./css/jquery.min.js"></script>
-    <script type="text/javascript" src="./css/jscex.min.js"></script>
-    <script type="text/javascript" src="./css/jscex-parser.js"></script>
-    <script type="text/javascript" src="./css/jscex-jit.js"></script>
-    <script type="text/javascript" src="./css/jscex-builderbase.min.js"></script>
-    <script type="text/javascript" src="./css/jscex-async.min.js"></script>
-    <script type="text/javascript" src="./css/jscex-async-powerpack.min.js"></script>
-    <script type="text/javascript" src="./css/functions.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./css/love.js" charset="utf-8"></script>
-      <style type="text/css">
-<!--
-.STYLE1 {color: #666666}
--->
-        </style>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星空生日祝福</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        .floating { animation: float 3s ease-in-out infinite; }
+        .twinkling-star {
+            position: absolute;
+            animation: twinkle 1.5s ease-in-out infinite;
+            animation-delay: calc(var(--delay) * 0.5s);
+        }
+        .message-bubble {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 50% 100%, 25% 75%, 0% 75%);
+        }
+
+        @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 1; }
+    }
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .floating { animation: float 3s ease-in-out infinite; }
+    .twinkling-star {
+        position: absolute;
+        animation: twinkle 1.5s ease-in-out infinite;
+        animation-delay: calc(var(--delay) * 0.5s);
+    }
+    .message-bubble {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 50% 100%, 25% 75%, 0% 75%);
+    }
+    .animated-bg {
+        background: linear-gradient(-45deg, #6366f1, #8b5cf6, #ec4899, #f43f5e);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+    }
+    </style>
 </head>
-    <body>
-      <audio autoplay="autopaly">
-          <source src="music/love.mp3" type="audio/mp3" />
-      </audio>  
-        <div id="main">
-             <div id="wrap">
-                <div id="text">
-              <div id="code">
-            <font color="#FF0000">    
-<span class="say"><h1>我希望有个如你一般的人。</h1></span><br><br>
-<span class="say">我希望有个如你一般的人。</span><br> <br>    
-<span class="say">如这山间清晨一般明亮清爽，</span><br><br>
-<span class="say">如奔赴古城道路上阳光一般的人，</span><br><br>
-<span class="say">温暖而不炙热，覆盖我所有肌肤。</span><br><br>
-<span class="say">由起点到夜晚，由山野到书房，一切问题的答案都很简单。</span><br><br>
-<span class="say">我希望有个如你一般的人，贯彻未来，数遍生命的公路牌。</span><br><br>
-<span class="say"><span class="space"></span> -- 雪萍--</span><br>
-<span class="say"><h1>生日快乐!</h1></span><br>
-        </font>
-      </div>
-                </div>
-                <div id="clock-box">
-                    <!-- <span class="STYLE1"></span><font color="#33CC00">距离我喜欢你，</font>
-<span class="STYLE1">已经是……</span> -->
-<span class="STYLE1"></span>
-<font color="#33CC00"></font>
-<span class="STYLE1"></span>
-                  <!-- <div id="clock"></div> -->
-              </div>
-                <canvas id="canvas" width="1100" height="680"></canvas>
-            </div>
-            
+<body class="bg-gradient-to-br from-indigo-900 to-purple-900 min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
+<!-- 动态渐变背景 -->
+<!--<div class="fixed inset-0 z-0">-->
+<!--    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 animate-pulse"></div>-->
+<!--    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(&#45;&#45;tw-gradient-stops))] from-transparent via-purple-500/20 to-transparent"></div>-->
+<!--    <div class="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,_#6366f1,_#8b5cf6,_#ec4899,_#6366f1)] opacity-30 blur-3xl"></div>-->
+<!--</div>-->
+<div class="fixed inset-0 z-0 animated-bg"></div>
+<!-- 星空背景 -->
+<div id="stars" class="fixed inset-0"></div>
+
+<div class="relative max-w-2xl w-full bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl z-10">
+    <div class="relative h-64 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+
+    <!-- 光晕效果 -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
+
+    <!-- 角落装饰 -->
+    <div class="absolute top-6 left-6 text-yellow-200 opacity-70">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"/>
+        </svg>
+    </div>
+    <div class="absolute top-6 right-6 text-yellow-300 opacity-60 transform rotate-45">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"/>
+        </svg>
+    </div>
+    <div class="absolute bottom-6 left-6 text-yellow-100 opacity-50">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="12"/>
+        </svg>
+    </div>
+    <div class="absolute bottom-6 right-6 text-yellow-200 opacity-60">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="12"/>
+        </svg>
+    </div>
+
+    <!-- 主标题 -->
+    <h1 class="text-5xl md:text-6xl font-bold text-white z-10 relative">
+        <span class="bg-gradient-to-r from-yellow-300 via-white to-yellow-300 bg-clip-text text-transparent">
+            雪萍 生日快乐！
+        </span>
+    </h1>
+
+    <!-- 底部装饰 -->
+    <div class="absolute bottom-6 w-full flex justify-center space-x-2">
+        <div class="w-2 h-2 bg-yellow-300 rounded-full animate-pulse"></div>
+        <div class="w-2 h-2 bg-pink-300 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+        <div class="w-2 h-2 bg-blue-300 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+        <div class="w-2 h-2 bg-purple-300 rounded-full animate-pulse" style="animation-delay: 0.6s;"></div>
+        <div class="w-2 h-2 bg-pink-300 rounded-full animate-pulse" style="animation-delay: 0.8s;"></div>
+        <div class="w-2 h-2 bg-yellow-300 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
+</div>
+
+
+    <div class="p-8">
+     <!-- 替换原来的气球代码 -->
+<div class="relative mb-8">
+    <!-- 背景装饰星星 -->
+    <div class="absolute top-0 left-10 text-yellow-300 text-2xl animate-pulse">★</div>
+    <div class="absolute top-4 right-20 text-yellow-200 text-xl">✦</div>
+    <div class="absolute top-12 left-20 text-yellow-300 text-lg">✧</div>
+    <div class="absolute bottom-10 right-10 text-yellow-200 text-xl animate-pulse">★</div>
+    <div class="absolute bottom-4 left-1/3 text-yellow-300 text-2xl">✦</div>
+
+    <!-- 彩带 -->
+    <div class="absolute top-0 left-1/4 w-1 h-20 bg-gradient-to-b from-pink-500 to-purple-500 mx-auto transform -rotate-12"></div>
+    <div class="absolute top-0 right-1/3 w-1 h-16 bg-gradient-to-b from-yellow-400 to-red-500 mx-auto transform rotate-6"></div>
+
+    <!-- 气球组合 -->
+<div class="flex justify-center space-x-8">
+
+    <!-- 蛋糕图片 -->
+    <div class="relative" style="animation-delay: 0.4s; transform: translateY(-20px);">
+        <div class="w-40 h-40  relative overflow-hidden">
+            <img src="image/cake.jpeg" alt="生日蛋糕" class="w-full h-full object-cover">
         </div>
-    
-    <script>
-    </script>
+    </div>
+</div>
 
-    <script>
-    (function(){
-        var canvas = $('#canvas');
-    
-        if (!canvas[0].getContext) {
-            $("#error").show();
-            return false;        }
+        <!-- 对话气泡 -->
+        <!-- 替换原来的对话气泡 -->
+<!-- 彩色版本祝福内容 -->
+<div class="rounded-lg p-6 mb-6 relative shadow-lg backdrop-filter backdrop-blur-md"
+     style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2);">
+    <div class="absolute -bottom-3 left-10 w-6 h-6 rounded-sm transform rotate-45"
+         style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2);"></div>
 
-        var width = canvas.width();
-        var height = canvas.height();        
-        canvas.attr("width", width);
-        canvas.attr("height", height);
-        var opts = {
-            seed: {
-                x: width / 2 - 20,
-                color: "rgb(190, 26, 37)",
-                scale: 2
-            },
-            branch: [
-                [535, 680, 570, 250, 500, 200, 30, 100, [
-                    [540, 500, 455, 417, 340, 400, 13, 100, [
-                        [450, 435, 434, 430, 394, 395, 2, 40]
-                    ]],
-                    [550, 445, 600, 356, 680, 345, 12, 100, [
-                        [578, 400, 648, 409, 661, 426, 3, 80]
-                    ]],
-                    [539, 281, 537, 248, 534, 217, 3, 40],
-                    [546, 397, 413, 247, 328, 244, 9, 80, [
-                        [427, 286, 383, 253, 371, 205, 2, 40],
-                        [498, 345, 435, 315, 395, 330, 4, 60]
-                    ]],
-                    [546, 357, 608, 252, 678, 221, 6, 100, [
-                        [590, 293, 646, 277, 648, 271, 2, 80]
-                    ]]
-                ]] 
-            ],
-            bloom: {
-                num: 700,
-                width: 1080,
-                height: 650,
-            },
-            footer: {
-                width: 1200,
-                height: 5,
-                speed: 10,
+    <p class="text-lg mb-3 flex items-start">
+        <span class="text-2xl mr-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">✨</span>
+        <span class="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">在这特别的日子里，</span>
+    </p>
+
+    <p class="text-lg mb-3 flex items-start">
+        <span class="text-2xl mr-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">🌟</span>
+        <span class="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">愿星光为你闪耀，</span>
+    </p>
+
+    <p class="text-lg mb-3 flex items-start">
+        <span class="text-2xl mr-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">🎈</span>
+        <span class="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">愿快乐与你相伴！</span>
+    </p>
+
+    <p class="text-lg mb-3 flex items-start">
+        <span class="text-2xl mr-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">💖</span>
+        <span class="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">愿你的每一天都充满幸福与欢笑！</span>
+    </p>
+</div>
+
+
+
+
+
+
+
+        <!-- 照片墙 -->
+<!--        <div class="grid grid-cols-3 gap-2 mb-6">-->
+<!--            <img src="https://picsum.photos/200/200?random=1" alt="生日聚会" class="rounded-lg shadow-md hover:scale-105 transition-transform">-->
+<!--            <img src="https://picsum.photos/200/200?random=2" alt="生日礼物" class="rounded-lg shadow-md hover:scale-105 transition-transform">-->
+<!--            <img src="https://picsum.photos/200/200?random=3" alt="朋友合照" class="rounded-lg shadow-md hover:scale-105 transition-transform">-->
+<!--        </div>-->
+
+        <!-- 控制按钮 -->
+<!--        <div class="flex justify-center space-x-4">-->
+<!--            <button id="musicBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full flex items-center transition-colors">-->
+<!--                <i class="fas fa-music mr-2"></i>生日音乐-->
+<!--            </button>-->
+<!--            <button id="fireworksBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full flex items-center transition-colors">-->
+<!--                <i class="fas fa-fire mr-2"></i>烟花表演-->
+<!--            </button>-->
+<!--        </div>-->
+    </div>
+</div>
+
+<audio id="birthdaySong" loop src="music/happybirthday.mp3"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 创建星空背景
+        createStars();
+
+        // 自动播放音乐
+        const birthdaySong = document.getElementById('birthdaySong');
+        birthdaySong.play().catch(e => {
+            console.log('自动播放被阻止:', e);
+            document.getElementById('musicBtn').innerHTML = '<i class="fas fa-play mr-2"></i>播放音乐';
+        });
+
+        // 音乐控制
+        document.getElementById('musicBtn').addEventListener('click', function() {
+            if(birthdaySong.paused) {
+                birthdaySong.play();
+                this.innerHTML = '<i class="fas fa-pause mr-2"></i>暂停音乐';
+            } else {
+                birthdaySong.pause();
+                this.innerHTML = '<i class="fas fa-play mr-2"></i>播放音乐';
+            }
+        });
+
+        // 烟花表演
+        document.getElementById('fireworksBtn').addEventListener('click', function() {
+            launchFireworks();
+        });
+
+        // 自动烟花效果
+        setInterval(launchFireworks, 10000);
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for(let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'twinkling-star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.backgroundColor = 'white';
+                star.style.borderRadius = '50%';
+                star.style.setProperty('--delay', Math.random());
+                starsContainer.appendChild(star);
             }
         }
 
-        var tree = new Tree(canvas[0], width, height, opts);
-        var seed = tree.seed;
-        var foot = tree.footer;
-        var hold = 1;
-
-        canvas.click(function(e) {
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            if (seed.hover(x, y)) {
-                hold = 0; 
-                canvas.unbind("click");
-                canvas.unbind("mousemove");
-                canvas.removeClass('hand');
+        function launchFireworks() {
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: {
+                            x: Math.random(),
+                            y: Math.random() * 0.5
+                        },
+                        colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff']
+                    });
+                }, i * 300);
             }
-        }).mousemove(function(e){
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            canvas.toggleClass('hand', seed.hover(x, y));
-        });
-
-        var seedAnimate = eval(Jscex.compile("async", function () {
-            seed.draw();
-            while (hold) {
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canScale()) {
-                seed.scale(0.95);
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canMove()) {
-                seed.move(0, 2);
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-        }));
-
-        var growAnimate = eval(Jscex.compile("async", function () {
-            do {
-              tree.grow();
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canGrow());
-        }));
-
-        var flowAnimate = eval(Jscex.compile("async", function () {
-            do {
-              tree.flower(2);
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canFlower());
-        }));
-
-        var moveAnimate = eval(Jscex.compile("async", function () {
-            tree.snapshot("p1", 240, 0, 610, 680);
-            while (tree.move("p1", 500, 0)) {
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-            foot.draw();
-            tree.snapshot("p2", 500, 0, 610, 680);
-
-            // 会有闪烁不得意这样做, (＞﹏＜)
-            canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
-            canvas.css("background", "#ffe");
-            $await(Jscex.Async.sleep(300));
-            canvas.css("background", "none");
-        }));
-
-        var jumpAnimate = eval(Jscex.compile("async", function () {
-            var ctx = tree.ctx;
-            while (true) {
-                tree.ctx.clearRect(0, 0, width, height);
-                tree.jump();
-                foot.draw();
-                $await(Jscex.Async.sleep(25));
-            }
-        }));
-
-        var textAnimate = eval(Jscex.compile("async", function () {
-        var together = new Date();
-        together.setFullYear(2009,10,23 );      //时间年月日
-        together.setHours(16);            //小时  
-        together.setMinutes(53);          //分钟
-        together.setSeconds(0);         //秒前一位
-        together.setMilliseconds(2);        //秒第二位
-
-        $("#code").show().typewriter();
-            $("#clock-box").fadeIn(500);
-            while (true) {
-                timeElapse(together);
-                $await(Jscex.Async.sleep(1000));
-            }
-        }));
-
-        var runAsync = eval(Jscex.compile("async", function () {
-            $await(seedAnimate());
-            $await(growAnimate());
-            $await(flowAnimate());
-            $await(moveAnimate());
-
-            textAnimate().start();
-
-            $await(jumpAnimate());
-        }));
-
-        runAsync().start();
-    })();
-    </script>
-
-    </body></html>
+        }
+    });
+</script>
+</body>
+</html>
