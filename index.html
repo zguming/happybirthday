@@ -3,11 +3,73 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星空生日祝福</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>生日快乐呀</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        @media (max-width: 768px) {
+            .text-5xl {
+                font-size: 2.5rem;
+            }
+
+            .text-6xl {
+                font-size: 3rem;
+            }
+
+            .h-64 {
+                height: 200px;
+            }
+
+            .p-8 {
+                padding: 1.5rem;
+            }
+
+            .w-40, .h-40 {
+                width: 32vw;
+                height: 32vw;
+            }
+
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+
+            .text-lg {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .text-5xl {
+                font-size: 2rem;
+            }
+
+            .text-6xl {
+                font-size: 2.25rem;
+            }
+
+            .h-64 {
+                height: 160px;
+            }
+
+            .p-8 {
+                padding: 1rem;
+            }
+
+            .w-40, .h-40 {
+                width: 40vw;
+                height: 40vw;
+            }
+
+            .text-lg {
+                font-size: 0.875rem;
+            }
+
+            .p-6 {
+                padding: 1rem;
+            }
+        }
+
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
@@ -132,9 +194,10 @@
 <div class="flex justify-center space-x-8">
 
     <!-- 蛋糕图片 -->
-    <div class="relative" style="animation-delay: 0.4s; transform: translateY(-20px);">
-        <div class="w-40 h-40  relative overflow-hidden">
-            <img src="image/cake.jpeg" alt="生日蛋糕" class="w-full h-full object-cover">
+    <!-- 蛋糕图片 -->
+    <div class="relative cake-container" style="animation-delay: 0.4s; transform: translateY(-10px);">
+        <div class="cake-image relative overflow-hidden">
+            <img src="image/cake.jpeg" alt="生日蛋糕" class="w-full h-full object-contain">
         </div>
     </div>
 </div>
