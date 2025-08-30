@@ -1,4 +1,4 @@
-const CACHE_NAME = 'birthday-page-v1';
+const CACHE_NAME = 'birthday-page-v2';
 const urlsToCache = [
     './',  // 主页面
     'index.html',
