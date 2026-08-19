@@ -532,20 +532,87 @@
         for(var i=0;i<n;i++) setTimeout(launch, i*280);
     }
 
-    /* ---------- 音乐控制 ---------- */
+    /* ---------- 音乐控制（<audio> 失败时自动切 Web Audio，兼容支付宝等 WebView） ---------- */
     var song = document.getElementById('birthdaySong');
     var musicBtn = document.getElementById('musicBtn');
     var musicLabel = document.getElementById('musicLabel');
+    var useWebAudio = false;
+    var isPlaying = false;
 
     function setPlaying(on){
+        isPlaying = on;
         musicBtn.classList.toggle('playing', on);
         musicLabel.textContent = on ? '暂停音乐' : '播放音乐';
     }
-    function playMusic(){ song.play().then(function(){setPlaying(true);}).catch(function(){setPlaying(false);}); }
-    function pauseMusic(){ song.pause(); setPlaying(false); }
+
+    /* ---- Web Audio 兕底引擎 ---- */
+    var actx = null, musicBuf = null, srcNode = null, waOffset = 0, waStartedAt = 0;
+    function waStopNode(){
+        if (srcNode){
+            try{ srcNode.stop(); }catch(e){}
+            try{ srcNode.disconnect(); }catch(e){}
+            srcNode = null;
+        }
+    }
+    function waStart(){
+        if (!musicBuf || !actx) return;
+        waStopNode();
+        srcNode = actx.createBufferSource();
+        srcNode.buffer = musicBuf;
+        srcNode.loop = true;
+        srcNode.connect(actx.destination);
+        srcNode.start(0, waOffset % musicBuf.duration);
+        waStartedAt = actx.currentTime;
+        setPlaying(true);
+    }
+    function waPlay(){
+        try{
+            if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+            if (actx.state === 'suspended') actx.resume();
+            useWebAudio = true;
+            if (!musicBuf){
+                setPlaying(true);
+                fetch(song.currentSrc || 'music/happybirthday.mp3')
+                    .then(function(r){ return r.arrayBuffer(); })
+                    .then(function(b){
+                        actx.decodeAudioData(b, function(d){ musicBuf = d; waStart(); });
+                    })
+                    .catch(function(){ setPlaying(false); });
+            } else waStart();
+        }catch(e){ setPlaying(false); }
+    }
+    function waPause(){
+        if (musicBuf && actx) waOffset = (waOffset + (actx.currentTime - waStartedAt)) % musicBuf.duration;
+        waStopNode();
+        setPlaying(false);
+    }
+
+    /* ---- 统一播放入口 ---- */
+    function checkSilent(){
+        /* 部分内核 play() resolve 了却不真正出声：无进度则切 Web Audio */
+        if (!useWebAudio && !song.paused && song.currentTime < 0.05){
+            song.pause();
+            waPlay();
+        }
+    }
+    function playMusic(){
+        if (useWebAudio){ waPlay(); return; }
+        var p = song.play();
+        if (p && p.then){
+            p.then(function(){ setPlaying(true); setTimeout(checkSilent, 1000); })
+             .catch(function(){ song.pause(); waPlay(); });
+        } else {
+            setPlaying(!song.paused);
+            setTimeout(checkSilent, 1000);
+        }
+    }
+    function pauseMusic(){
+        if (useWebAudio){ waPause(); return; }
+        song.pause(); setPlaying(false);
+    }
 
     musicBtn.addEventListener('click', function(){
-        if(song.paused) playMusic(); else pauseMusic();
+        if(!isPlaying) playMusic(); else pauseMusic();
     });
 
     /* ---------- 按钮涟漪 ---------- */

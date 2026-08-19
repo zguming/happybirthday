@@ -1,4 +1,4 @@
-const VERSION = 'birthday-v15';
+const VERSION = 'birthday-v16';
 const CORE_ASSETS = [
     './',
     './index.html',
