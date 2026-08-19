@@ -532,7 +532,7 @@
         for(var i=0;i<n;i++) setTimeout(launch, i*280);
     }
 
-    /* ---------- 音乐控制（保持简单：支付宝实测可用，勿加自动切换兜底） ---------- */
+    /* ---------- 音乐控制 ---------- */
     var song = document.getElementById('birthdaySong');
     var musicBtn = document.getElementById('musicBtn');
     var musicLabel = document.getElementById('musicLabel');
@@ -541,10 +541,7 @@
         musicBtn.classList.toggle('playing', on);
         musicLabel.textContent = on ? '暂停音乐' : '播放音乐';
     }
-    function playMusic(){
-        song.play().then(function(){ setPlaying(true); })
-                   .catch(function(){ setPlaying(false); });
-    }
+    function playMusic(){ song.play().then(function(){setPlaying(true);}).catch(function(){setPlaying(false);}); }
     function pauseMusic(){ song.pause(); setPlaying(false); }
 
     musicBtn.addEventListener('click', function(){
@@ -629,15 +626,6 @@
 
     /* ---------- Service Worker ---------- */
     if('serviceWorker' in navigator){
-        var prevController = navigator.serviceWorker.controller;
-        navigator.serviceWorker.addEventListener('message', function(e){
-            /* 旧 SW 服务的页面在新版接管后自动刷新一次，避免继续看到旧内容 */
-            if (e.data && e.data.type === 'SW_UPDATED' && prevController && e.source !== prevController
-                && !sessionStorage.getItem('swReloaded')){
-                sessionStorage.setItem('swReloaded', '1');
-                location.reload();
-            }
-        });
         window.addEventListener('load', function(){
             navigator.serviceWorker.register('./sw.js').catch(function(){});
         });

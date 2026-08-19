@@ -1,4 +1,4 @@
-const VERSION = 'birthday-v18';
+const VERSION = 'birthday-v12';
 const CORE_ASSETS = [
     './',
     './index.html',
@@ -21,22 +21,16 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('activate', function(event) {
     event.waitUntil(
-        caches.keys().then(function(names) {
-            return Promise.all(
-                names.map(function(name) {
-                    if (name !== VERSION) return caches.delete(name);
-                })
-            );
-        }).then(function() {
-            return self.clients.claim();
-        }).then(function() {
-            /* 通知已打开的页面：新版 SW 已接管，页面可自动刷新拿到新内容 */
-            return self.clients.matchAll({ type: 'window' });
-        }).then(function(list) {
-            list.forEach(function(c) {
-                try { c.postMessage({ type: 'SW_UPDATED', version: VERSION }); } catch (e) {}
-            });
-        })
+        Promise.all([
+            caches.keys().then(function(names) {
+                return Promise.all(
+                    names.map(function(name) {
+                        if (name !== VERSION) return caches.delete(name);
+                    })
+                );
+            }),
+            self.clients.claim()
+        ])
     );
 });
 
@@ -47,7 +41,7 @@ self.addEventListener('fetch', function(event) {
     var url = new URL(request.url);
 
     if (url.origin === location.origin) {
-        /* 本地资源：缓存优先，离线导航回退到首页（发布新版需同步递增 VERSION） */
+        /* 本地资源：缓存优先，离线导航回退到首页 */
         event.respondWith(
             caches.match(request).then(function(hit) {
                 if (hit) return hit;
