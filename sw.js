@@ -1,4 +1,4 @@
-const VERSION = 'birthday-v12';
+const VERSION = 'birthday-v14';
 const CORE_ASSETS = [
     './',
     './index.html',
@@ -41,7 +41,7 @@ self.addEventListener('fetch', function(event) {
     var url = new URL(request.url);
 
     if (url.origin === location.origin) {
-        /* 本地资源：缓存优先，离线导航回退到首页 */
+        /* 本地资源：缓存优先，离线导航回退到首页（发布新版需同步递增 VERSION） */
         event.respondWith(
             caches.match(request).then(function(hit) {
                 if (hit) return hit;
