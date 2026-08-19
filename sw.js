@@ -1,90 +1,75 @@
-const CACHE_NAME = 'birthday-page-v3';
-const STATIC_CACHE_NAME = 'birthday-static-v1';
-const pageUrlsToCache = [
+const VERSION = 'birthday-v12';
+const CORE_ASSETS = [
     './',
-    'index.html'
+    './index.html',
+    './image/cake.webp',
+    './music/happybirthday.mp3'
 ];
 
-const staticUrlsToCache = [
-    'music/happybirthday.mp3',
-       'image/cake.webp',
-       'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css',
-       'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
-        'https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js'
+const FONT_HOSTS = [
+    'fonts.googleapis.com',
+    'fonts.gstatic.com'
 ];
 
 self.addEventListener('install', function(event) {
-    console.log('Service Worker installing...');
     event.waitUntil(
-        Promise.all([
-            caches.open(CACHE_NAME)
-                .then(function(cache) {
-                    return cache.addAll(pageUrlsToCache);
-                }),
-            caches.open(STATIC_CACHE_NAME)
-                .then(function(cache) {
-                    return cache.addAll(staticUrlsToCache);
-                })
-        ])
-        .then(() => self.skipWaiting())
+        caches.open(VERSION)
+            .then(function(cache) { return cache.addAll(CORE_ASSETS); })
+            .then(function() { return self.skipWaiting(); })
     );
 });
 
-self.addEventListener('fetch', function(event) {
-    const requestUrl = event.request.url;
-
-    if (staticUrlsToCache.some(staticUrl => requestUrl.includes(staticUrl))) {
-        event.respondWith(
-            caches.open(STATIC_CACHE_NAME).then(function(cache) {
-                return cache.match(event.request).then(function(response) {
-                    if (response) {
-                        return response;
-                    }
-                    return fetch(event.request).then(function(networkResponse) {
-                        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                            return networkResponse;
-                        }
-                        cache.put(event.request, networkResponse.clone());
-                        return networkResponse;
-                    });
-                });
-            })
-        );
-    } else {
-        event.respondWith(
-            caches.open(CACHE_NAME).then(function(cache) {
-                return cache.match(event.request).then(function(response) {
-                    if (response) {
-                        return response;
-                    }
-                    return fetch(event.request).then(function(networkResponse) {
-                        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                            return networkResponse;
-                        }
-
-                        cache.put(event.request, networkResponse.clone());
-                        return networkResponse;
-                    });
-                });
-            })
-        );
-    }
-});
 self.addEventListener('activate', function(event) {
-    console.log('Service Worker activating...');
-    var cacheWhitelist = [CACHE_NAME, STATIC_CACHE_NAME];
     event.waitUntil(
         Promise.all([
-            caches.keys().then(function(cacheNames) {
+            caches.keys().then(function(names) {
                 return Promise.all(
-                    cacheNames.map(function(cacheName) {
-                        if (cacheWhitelist.indexOf(cacheName) === -1) {
-                            return caches.delete(cacheName);
-                        }
+                    names.map(function(name) {
+                        if (name !== VERSION) return caches.delete(name);
                     })
                 );
             }),
             self.clients.claim()
         ])
     );
+});
+
+self.addEventListener('fetch', function(event) {
+    var request = event.request;
+    if (request.method !== 'GET') return;
+
+    var url = new URL(request.url);
+
+    if (url.origin === location.origin) {
+        /* 本地资源：缓存优先，离线导航回退到首页 */
+        event.respondWith(
+            caches.match(request).then(function(hit) {
+                if (hit) return hit;
+                return fetch(request).then(function(res) {
+                    if (res && res.ok) {
+                        var copy = res.clone();
+                        caches.open(VERSION).then(function(cache) { cache.put(request, copy); });
+                    }
+                    return res;
+                }).catch(function() {
+                    if (request.mode === 'navigate') return caches.match('./index.html');
+                });
+            })
+        );
+    } else if (FONT_HOSTS.indexOf(url.hostname) !== -1) {
+        /* 字体：缓存优先，未命中走网络并尝试补缓存（opaque 响应 put 可能失败，忽略即可） */
+        event.respondWith(
+            caches.match(request).then(function(hit) {
+                if (hit) return hit;
+                return fetch(request).then(function(res) {
+                    var copy;
+                    try { copy = res.clone(); } catch (e) { return res; }
+                    caches.open(VERSION).then(function(cache) {
+                        cache.put(request, copy).catch(function() {});
+                    });
+                    return res;
+                }).catch(function() { return new Response('', { status: 504 }); });
+            })
+        );
+    }
 });
