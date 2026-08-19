@@ -1,4 +1,4 @@
-const VERSION = 'birthday-v16';
+const VERSION = 'birthday-v17';
 const CORE_ASSETS = [
     './',
     './index.html',
@@ -37,9 +37,6 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
     var request = event.request;
     if (request.method !== 'GET') return;
-
-    /* 支付宝/UC 内核播放音频用 Range 分段请求，缓存响应不支持，必须直连网络 */
-    if (request.headers.has('range')) return;
 
     var url = new URL(request.url);
 
