@@ -1,4 +1,4 @@
-const VERSION = 'birthday-v17';
+const VERSION = 'birthday-v18';
 const CORE_ASSETS = [
     './',
     './index.html',
@@ -21,16 +21,22 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('activate', function(event) {
     event.waitUntil(
-        Promise.all([
-            caches.keys().then(function(names) {
-                return Promise.all(
-                    names.map(function(name) {
-                        if (name !== VERSION) return caches.delete(name);
-                    })
-                );
-            }),
-            self.clients.claim()
-        ])
+        caches.keys().then(function(names) {
+            return Promise.all(
+                names.map(function(name) {
+                    if (name !== VERSION) return caches.delete(name);
+                })
+            );
+        }).then(function() {
+            return self.clients.claim();
+        }).then(function() {
+            /* 通知已打开的页面：新版 SW 已接管，页面可自动刷新拿到新内容 */
+            return self.clients.matchAll({ type: 'window' });
+        }).then(function(list) {
+            list.forEach(function(c) {
+                try { c.postMessage({ type: 'SW_UPDATED', version: VERSION }); } catch (e) {}
+            });
+        })
     );
 });
 
